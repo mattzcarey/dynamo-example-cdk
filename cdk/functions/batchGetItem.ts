@@ -5,14 +5,23 @@ const dynamoDb = new DocumentClient();
 
 export const handler = async (): Promise<Response> => {
   const params = {
-    TableName: 'someTableName',
-    Key: {
-      PK: 'some partition key',
-      SK: 'some sort key',
+    RequestItems: {
+      someTableName: {
+        Keys: [
+          {
+            PK: 'some partition key',
+            SK: 'some sort key',
+          },
+          {
+            PK: 'some other partition key',
+            SK: 'some other sort key',
+          },
+        ],
+      },
     },
   };
   try {
-    const result = await dynamoDb.get(params).promise();
+    const result = await dynamoDb.batchGet(params).promise();
 
     return successResponse(JSON.stringify(result));
   } catch (error) {
